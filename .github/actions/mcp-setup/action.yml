@@ -1,0 +1,49 @@
+name: 'MCP Setup'
+description: 'Install MCP dependencies and generate /tmp/mcp-config.json from .claude/mcp-config.json'
+inputs:
+  atlassian_email:
+    required: false
+    default: ''
+  atlassian_api_token:
+    required: false
+    default: ''
+  slack_bot_token:
+    required: false
+    default: ''
+  dd_api_key:
+    required: false
+    default: ''
+  dd_app_key:
+    required: false
+    default: ''
+  github_token:
+    required: false
+    default: ''
+  figma_access_token:
+    required: false
+    default: ''
+runs:
+  using: 'composite'
+  steps:
+    - name: Install MCP dependencies
+      shell: bash
+      run: npm install -g mcp-atlassian jsdom figma-developer-mcp 2>&1 | tail -5
+    - name: Generate MCP config
+      shell: bash
+      env:
+        ATLASSIAN_EMAIL: ${{ inputs.atlassian_email }}
+        ATLASSIAN_API_TOKEN: ${{ inputs.atlassian_api_token }}
+        SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
+        DD_API_KEY: ${{ inputs.dd_api_key }}
+        DD_APP_KEY: ${{ inputs.dd_app_key }}
+        GITHUB_PERSONAL_ACCESS_TOKEN: ${{ inputs.github_token }}
+        FIGMA_ACCESS_TOKEN: ${{ inputs.figma_access_token }}
+      run: |
+        cat > /tmp/gen-mcp.js << 'SCRIPT'
+        const fs = require('fs');
+        let config = fs.readFileSync('.claude/mcp-config.json', 'utf8');
+        config = config.replace(/\${(\w+)}/g, (_, k) => process.env[k] || '');
+        fs.writeFileSync('/tmp/mcp-config.json', config);
+        console.log('MCP config written');
+        SCRIPT
+        node /tmp/gen-mcp.js

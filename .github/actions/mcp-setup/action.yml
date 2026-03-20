@@ -1,49 +1,62 @@
 name: 'MCP Setup'
-description: 'Install MCP dependencies and generate /tmp/mcp-config.json from .claude/mcp-config.json'
+description: '.claude/mcp-config.json 을 읽어 ${VAR} 치환 후 /tmp/mcp-config.json 으로 저장'
+
 inputs:
+  github_token:
+    description: 'GITHUB_PERSONAL_ACCESS_TOKEN'
+    required: false
+    default: ''
   atlassian_email:
+    description: 'ATLASSIAN_EMAIL'
     required: false
     default: ''
   atlassian_api_token:
+    description: 'ATLASSIAN_API_TOKEN'
     required: false
     default: ''
   slack_bot_token:
+    description: 'SLACK_BOT_TOKEN'
     required: false
     default: ''
   dd_api_key:
+    description: 'DD_API_KEY'
     required: false
     default: ''
   dd_app_key:
-    required: false
-    default: ''
-  github_token:
+    description: 'DD_APP_KEY'
     required: false
     default: ''
   figma_access_token:
+    description: 'FIGMA_ACCESS_TOKEN'
     required: false
     default: ''
+
 runs:
   using: 'composite'
   steps:
-    - name: Install MCP dependencies
+    - name: Install github-mcp-server
       shell: bash
-      run: npm install -g mcp-atlassian jsdom figma-developer-mcp 2>&1 | tail -5
-    - name: Generate MCP config
+      run: |
+        curl -sL https://github.com/github/github-mcp-server/releases/latest/download/github-mcp-server_Linux_x86_64.tar.gz | tar xz
+        sudo mv github-mcp-server /usr/local/bin/
+
+    - name: Generate /tmp/mcp-config.json
       shell: bash
       env:
-        ATLASSIAN_EMAIL: ${{ inputs.atlassian_email }}
-        ATLASSIAN_API_TOKEN: ${{ inputs.atlassian_api_token }}
-        SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
-        DD_API_KEY: ${{ inputs.dd_api_key }}
-        DD_APP_KEY: ${{ inputs.dd_app_key }}
         GITHUB_PERSONAL_ACCESS_TOKEN: ${{ inputs.github_token }}
-        FIGMA_ACCESS_TOKEN: ${{ inputs.figma_access_token }}
+        ATLASSIAN_EMAIL:              ${{ inputs.atlassian_email }}
+        ATLASSIAN_API_TOKEN:          ${{ inputs.atlassian_api_token }}
+        SLACK_BOT_TOKEN:              ${{ inputs.slack_bot_token }}
+        DD_API_KEY:                   ${{ inputs.dd_api_key }}
+        DD_APP_KEY:                   ${{ inputs.dd_app_key }}
+        FIGMA_ACCESS_TOKEN:           ${{ inputs.figma_access_token }}
       run: |
-        cat > /tmp/gen-mcp.js << 'SCRIPT'
-        const fs = require('fs');
-        let config = fs.readFileSync('.claude/mcp-config.json', 'utf8');
-        config = config.replace(/\${(\w+)}/g, (_, k) => process.env[k] || '');
-        fs.writeFileSync('/tmp/mcp-config.json', config);
-        console.log('MCP config written');
-        SCRIPT
-        node /tmp/gen-mcp.js
+        # 개행/공백 제거 후 치환 (헤더 값 유효성 보장)
+        export GITHUB_PERSONAL_ACCESS_TOKEN="${GITHUB_PERSONAL_ACCESS_TOKEN//[$'\t\r\n ']}"
+        export ATLASSIAN_EMAIL="${ATLASSIAN_EMAIL//[$'\t\r\n ']}"
+        export ATLASSIAN_API_TOKEN="${ATLASSIAN_API_TOKEN//[$'\t\r\n ']}"
+        export SLACK_BOT_TOKEN="${SLACK_BOT_TOKEN//[$'\t\r\n ']}"
+        export DD_API_KEY="${DD_API_KEY//[$'\t\r\n ']}"
+        export DD_APP_KEY="${DD_APP_KEY//[$'\t\r\n ']}"
+        export FIGMA_ACCESS_TOKEN="${FIGMA_ACCESS_TOKEN//[$'\t\r\n ']}"
+        envsubst < .claude/mcp-config.json > /tmp/mcp-config.json

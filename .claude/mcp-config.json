@@ -1,0 +1,46 @@
+{
+  "mcpServers": {
+    "github": {
+      "type": "stdio",
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
+      "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}" }
+    },
+    "atlassian": {
+      "type": "stdio",
+      "command": "mcp-atlassian",
+      "env": {
+        "ATLASSIAN_BASE_URL": "https://socarcorp.atlassian.net",
+        "ATLASSIAN_EMAIL": "${ATLASSIAN_EMAIL}",
+        "ATLASSIAN_API_TOKEN": "${ATLASSIAN_API_TOKEN}"
+      }
+    },
+    "figma": {
+      "type": "stdio",
+      "command": "figma-developer-mcp",
+      "env": { "FIGMA_API_KEY": "${FIGMA_ACCESS_TOKEN}" }
+    },
+    "datadog": {
+      "type": "http",
+      "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp",
+      "headers": {
+        "DD-API-KEY": "${DD_API_KEY}",
+        "DD-APPLICATION-KEY": "${DD_APP_KEY}"
+      },
+      "env": {
+        "DD_API_KEY": "${DD_API_KEY}",
+        "DD_APP_KEY": "${DD_APP_KEY}",
+        "DD_SITE": "datadoghq.com"
+      }
+    },
+    "slack": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+        "SLACK_TEAM_ID": "T04GJSZC2"
+      }
+    }
+  }
+}

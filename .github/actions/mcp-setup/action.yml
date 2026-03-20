@@ -1,5 +1,5 @@
 name: 'MCP Setup'
-description: '.claude/mcp-config.json 을 읽어 ${VAR} 치환 후 /tmp/mcp-config.json 으로 저장'
+description: 'mcp-config.json 을 읽어 ${VAR} 치환 후 /tmp/mcp-config.json 으로 저장'
 
 inputs:
   github_token:
@@ -59,4 +59,4 @@ runs:
         export DD_API_KEY="${DD_API_KEY//[$'\t\r\n ']}"
         export DD_APP_KEY="${DD_APP_KEY//[$'\t\r\n ']}"
         export FIGMA_ACCESS_TOKEN="${FIGMA_ACCESS_TOKEN//[$'\t\r\n ']}"
-        envsubst < .claude/mcp-config.json > /tmp/mcp-config.json
+        envsubst < "${{ github.action_path }}/mcp-config.json" > /tmp/mcp-config.json

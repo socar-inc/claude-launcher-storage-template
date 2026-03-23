@@ -34,11 +34,13 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Install github-mcp-server
+    - name: Install MCP servers
       shell: bash
       run: |
         curl -sL https://github.com/github/github-mcp-server/releases/latest/download/github-mcp-server_Linux_x86_64.tar.gz | tar xz
         sudo mv github-mcp-server /usr/local/bin/
+        pip install mcp-atlassian --quiet --break-system-packages && sudo ln -sf ~/.local/bin/mcp-atlassian /usr/local/bin/mcp-atlassian
+        npm install -g figma-developer-mcp --silent
 
     - name: Generate /tmp/mcp-config.json
       shell: bash

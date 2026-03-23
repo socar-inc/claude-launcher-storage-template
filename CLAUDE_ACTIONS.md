@@ -13,11 +13,10 @@
 
 - `bash` — gh CLI, git 명령 실행
 - `read` / `write` / `edit` — 파일 작업
-- GitHub MCP (mcp-config.json에 설정된 경우)
+- MCP 서버 (mcp-config.json에 설정된 경우): GitHub, Atlassian, Slack, Figma, Datadog 등
 
 ## 사용 불가 도구
 
-- 로컬 MCP (Atlassian, Slack, Figma 등) — Actions 환경에 없음
 - 브라우저, GUI 관련 도구
 
 ## 하지 말아야 할 것

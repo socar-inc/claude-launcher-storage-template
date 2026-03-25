@@ -14,12 +14,8 @@ inputs:
     description: 'SLACK_BOT_TOKEN'
     required: false
     default: ''
-  dd_api_key:
-    description: 'DD_API_KEY'
-    required: false
-    default: ''
-  dd_app_key:
-    description: 'DD_APP_KEY'
+  datadog_mcp_token:
+    description: 'DATADOG_MCP_TOKEN (JSON: {client_id, refresh_token})'
     required: false
     default: ''
   figma_access_token:
@@ -36,21 +32,34 @@ runs:
         pip install mcp-atlassian --quiet --break-system-packages && sudo ln -sf ~/.local/bin/mcp-atlassian /usr/local/bin/mcp-atlassian
         npm install -g figma-developer-mcp --silent
 
+    - name: Exchange Datadog OAuth token
+      if: ${{ inputs.datadog_mcp_token != '' }}
+      shell: bash
+      env:
+        DATADOG_MCP_TOKEN: ${{ inputs.datadog_mcp_token }}
+      run: |
+        DD_CLIENT_ID=$(echo "$DATADOG_MCP_TOKEN" | python3 -c "import sys,json; print(json.load(sys.stdin)['client_id'])")
+        DD_REFRESH=$(echo "$DATADOG_MCP_TOKEN" | python3 -c "import sys,json; print(json.load(sys.stdin)['refresh_token'])")
+        RESP=$(curl -sf -X POST "https://mcp.datadoghq.com/api/unstable/mcp-server/token" \
+          -H "Content-Type: application/x-www-form-urlencoded" \
+          -d "grant_type=refresh_token&client_id=${DD_CLIENT_ID}&refresh_token=${DD_REFRESH}")
+        echo "DATADOG_ACCESS_TOKEN=$(echo "$RESP" | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")" >> $GITHUB_ENV
+
     - name: Generate /tmp/mcp-config.json
       shell: bash
       env:
         ATLASSIAN_EMAIL:              ${{ inputs.atlassian_email }}
         ATLASSIAN_API_TOKEN:          ${{ inputs.atlassian_api_token }}
         SLACK_BOT_TOKEN:              ${{ inputs.slack_bot_token }}
-        DD_API_KEY:                   ${{ inputs.dd_api_key }}
-        DD_APP_KEY:                   ${{ inputs.dd_app_key }}
         FIGMA_ACCESS_TOKEN:           ${{ inputs.figma_access_token }}
       run: |
         # 개행/공백 제거 후 치환 (헤더 값 유효성 보장)
-        export ATLASSIAN_EMAIL="${ATLASSIAN_EMAIL//[$'\t\r\n ']}"
-        export ATLASSIAN_API_TOKEN="${ATLASSIAN_API_TOKEN//[$'\t\r\n ']}"
-        export SLACK_BOT_TOKEN="${SLACK_BOT_TOKEN//[$'\t\r\n ']}"
-        export DD_API_KEY="${DD_API_KEY//[$'\t\r\n ']}"
-        export DD_APP_KEY="${DD_APP_KEY//[$'\t\r\n ']}"
-        export FIGMA_ACCESS_TOKEN="${FIGMA_ACCESS_TOKEN//[$'\t\r\n ']}"
+        export ATLASSIAN_EMAIL="${ATLASSIAN_EMAIL//[$'	
+ ']}"
+        export ATLASSIAN_API_TOKEN="${ATLASSIAN_API_TOKEN//[$'	
+ ']}"
+        export SLACK_BOT_TOKEN="${SLACK_BOT_TOKEN//[$'	
+ ']}"
+        export FIGMA_ACCESS_TOKEN="${FIGMA_ACCESS_TOKEN//[$'	
+ ']}"
         envsubst < "${{ github.action_path }}/mcp-config.json" > /tmp/mcp-config.json

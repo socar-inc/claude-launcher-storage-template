@@ -1,5 +1,5 @@
 name: 'MCP Setup'
-description: 'mcp-config.json 을 읽어 ${VAR} 치환 후 /tmp/mcp-config.json 으로 저장'
+description: 'MCP 서버 설치 및 설정, curl용 시크릿 환경변수 주입'
 
 inputs:
   atlassian_email:
@@ -11,7 +11,7 @@ inputs:
     required: false
     default: ''
   slack_bot_token:
-    description: 'SLACK_BOT_TOKEN'
+    description: 'SLACK_BOT_TOKEN (curl용 — Slack MCP 미사용)'
     required: false
     default: ''
   datadog_mcp_token:
@@ -48,18 +48,19 @@ runs:
     - name: Generate /tmp/mcp-config.json
       shell: bash
       env:
-        ATLASSIAN_EMAIL:              ${{ inputs.atlassian_email }}
-        ATLASSIAN_API_TOKEN:          ${{ inputs.atlassian_api_token }}
-        SLACK_BOT_TOKEN:              ${{ inputs.slack_bot_token }}
-        FIGMA_ACCESS_TOKEN:           ${{ inputs.figma_access_token }}
+        ATLASSIAN_EMAIL:     ${{ inputs.atlassian_email }}
+        ATLASSIAN_API_TOKEN: ${{ inputs.atlassian_api_token }}
+        FIGMA_ACCESS_TOKEN:  ${{ inputs.figma_access_token }}
       run: |
-        # 개행/공백 제거 후 치환 (헤더 값 유효성 보장)
-        export ATLASSIAN_EMAIL="${ATLASSIAN_EMAIL//[$'	
- ']}"
-        export ATLASSIAN_API_TOKEN="${ATLASSIAN_API_TOKEN//[$'	
- ']}"
-        export SLACK_BOT_TOKEN="${SLACK_BOT_TOKEN//[$'	
- ']}"
-        export FIGMA_ACCESS_TOKEN="${FIGMA_ACCESS_TOKEN//[$'	
- ']}"
+        export ATLASSIAN_EMAIL="${ATLASSIAN_EMAIL//[[:space:]]}"
+        export ATLASSIAN_API_TOKEN="${ATLASSIAN_API_TOKEN//[[:space:]]}"
+        export FIGMA_ACCESS_TOKEN="${FIGMA_ACCESS_TOKEN//[[:space:]]}"
         envsubst < "${{ github.action_path }}/mcp-config.json" > /tmp/mcp-config.json
+
+    - name: Export curl secrets to environment
+      if: ${{ inputs.slack_bot_token != '' }}
+      shell: bash
+      env:
+        SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
+      run: |
+        echo "SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN//[[:space:]]}" >> $GITHUB_ENV

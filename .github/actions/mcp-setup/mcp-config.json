@@ -12,15 +12,6 @@
         "JIRA_API_TOKEN": "${ATLASSIAN_API_TOKEN}"
       }
     },
-    "slack": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-slack"],
-      "env": {
-        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
-        "SLACK_TEAM_ID": "T04GJSZC2"
-      }
-    },
     "datadog": {
       "type": "http",
       "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp",

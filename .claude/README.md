@@ -46,14 +46,20 @@ Atlassian 도메인: `socarcorp.atlassian.net`
 
 ## Datadog 설정
 
-`DATADOG_MCP_TOKEN`은 JSON 형식입니다:
+`DATADOG_MCP_TOKEN`은 OAuth 2.1 PKCE 플로우로 발급되는 JSON 형식입니다:
 
 ```json
-{"client_id": "YOUR_CLIENT_ID", "refresh_token": "YOUR_REFRESH_TOKEN"}
+{"client_id": "...", "refresh_token": "..."}
 ```
 
-1. **API Key**: https://app.datadoghq.com/organization-settings/api-keys
-2. **Application Key**: https://app.datadoghq.com/organization-settings/application-keys
+**claude-launcher 앱 사용 시 (권장)**
+1. GitHub Actions 설정 → `DATADOG_MCP_TOKEN` 항목의 **🔑 OAuth 인증** 버튼 클릭
+2. 브라우저에서 Datadog 계정으로 로그인 및 권한 승인
+3. 자동으로 JSON 값이 생성되어 입력됨
+
+**수동 발급 시**
+- Discovery URL: `https://mcp.datadoghq.com/.well-known/oauth-authorization-server`
+- OAuth 2.1 PKCE (Dynamic Client Registration 포함)로 `client_id` + `refresh_token` 취득
 
 ---
 

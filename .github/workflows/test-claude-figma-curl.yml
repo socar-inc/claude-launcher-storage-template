@@ -1,0 +1,33 @@
+name: "Test - Claude Figma(CURL)"
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  run-claude:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/mcp-setup
+        with:
+          figma_access_token: ${{ secrets.FIGMA_ACCESS_TOKEN }}
+      - name: Run Claude
+        uses: anthropics/claude-code-action@v1
+        env:
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PAT }}
+          FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_TOKEN }}
+          claude_args: "--dangerously-skip-permissions"
+          show_full_output: "true"
+          prompt: |
+            작업 시작 전 반드시 `./CLAUDE_ACTIONS.md` 파일을 읽고 Figma curl 사용 지침을 따를 것.
+            ---
+            Figma CURL 테스트:
+            curl로 Figma REST API를 호출해 내 계정 정보를 조회하고 핸들(handle)과 이메일을 출력해줘.
+            인증: X-Figma-Token 헤더에 $FIGMA_ACCESS_TOKEN 사용.

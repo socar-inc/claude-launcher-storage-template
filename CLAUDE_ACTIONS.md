@@ -27,7 +27,7 @@
 
 ## GitHub — `gh` CLI
 
-> MCP 툴 호출 금지. `gh` CLI는 `GITHUB_TOKEN`이 자동 제공되어 별도 인증 설정 없이 실행됨.
+> Ubuntu runner에 `gh` CLI가 기본 내장되어 있어 MCP보다 빠르고 안정적임. `GITHUB_TOKEN`이 자동 제공되어 별도 인증 설정 없이 실행됨.
 
 `GITHUB_TOKEN`은 개인 토큰이 아니라 GitHub Actions 실행 시 자동 생성·주입되는 임시 토큰임.
 

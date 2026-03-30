@@ -64,6 +64,8 @@ python3 scripts/datadog-mcp-auth.py
 
 앱 하단 상태바 **⚡ Storage** → `DATADOG_MCP_TOKEN` **🔑 OAuth 인증** 버튼
 
+> 발급된 클라이언트 관리: https://app.datadoghq.com/personal-settings/apps
+
 ---
 
 ## Figma 설정

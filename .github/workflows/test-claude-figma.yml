@@ -1,0 +1,32 @@
+name: "Test - Claude Figma(MCP)"
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  run-claude:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/mcp-setup
+        with:
+          figma_access_token: ${{ secrets.FIGMA_ACCESS_TOKEN }}
+      - name: Run Claude
+        uses: anthropics/claude-code-action@v1
+        env:
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PAT }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_TOKEN }}
+          claude_args: "--mcp-config /tmp/mcp-config.json --dangerously-skip-permissions"
+          show_full_output: "true"
+          prompt: |
+            작업 시작 전 반드시 `./CLAUDE_ACTIONS.md` 파일을 읽고 MCP 도구 사용 지침을 따를 것.
+            ---
+            Figma MCP 테스트:
+            mcp__figma__get_figma_data 툴을 사용해 파일 키 "YOUR_FIGMA_FILE_KEY" 의 데이터를 조회하고,
+            파일 이름과 최상위 페이지 목록(이름만)을 출력해줘.

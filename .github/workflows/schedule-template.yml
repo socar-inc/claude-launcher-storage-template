@@ -1,0 +1,46 @@
+name: "{label}"
+on:
+  schedule:
+    - cron: '{cron}'
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  run-claude:
+    runs-on: ubuntu-latest
+    # GITHUB_TOKEN 권한 — Claude가 이 repo에서 수행할 수 있는 Git 작업 범위
+    permissions:
+      contents: write       # 파일 커밋, 브랜치 푸시
+      pull-requests: write  # PR 생성/수정
+      issues: write         # 이슈 생성/댓글
+      id-token: write       # Claude OAuth 인증
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/mcp-setup
+        with:
+{mcp_with}
+{mcp_filter}
+      - uses: actions/checkout@v4
+        with:
+          repository: {target_repo}
+          path: workspace
+
+      - name: Copy instructions to workspace
+        run: cp CLAUDE_ACTIONS.md workspace/
+
+      - name: Run Claude
+        uses: anthropics/claude-code-action@v1
+        env:
+{extra_env}
+        with:
+          claude_code_oauth_token: ${{ secrets.{secret_name} }}
+          claude_args: "--mcp-config /tmp/mcp-config.json --dangerously-skip-permissions"
+          show_full_output: "true"
+          prompt: |
+            작업 시작 전 반드시 `./CLAUDE_ACTIONS.md` 파일을 읽고 지침을 따를 것.
+            로컬 CLAUDE.md가 있더라도 이 환경에서는 CLAUDE_ACTIONS.md를 우선할 것.
+            ---
+{prompt}

@@ -13,7 +13,6 @@ Claude Launcher의 스케줄 및 자동화 워크플로우 저장소입니다.
 > [!NOTE]
 > **복제 후 필수 설정 체크리스트**
 >
-> - [ ] `mcp-config.json`의 `your-domain.atlassian.net` → 실제 Atlassian 도메인으로 수정
 > - [ ] GitHub Secrets 등록 (`CLAUDE_CODE_TOKEN`, `GH_PAT`, 사용할 서비스 토큰)
 > - [ ] `test-claude-slack.yml` — `YOUR_CHANNEL_ID` → 실제 Slack 채널 ID로 수정
 > - [ ] `test-claude-figma.yml` — `YOUR_FIGMA_FILE_KEY` → 실제 Figma 파일 키로 수정
@@ -71,7 +70,7 @@ Claude 실행 전 `.github/actions/mcp-setup` 이 MCP 서버를 설치하고 환
 
 관련 파일:
 - `.github/actions/mcp-setup/action.yml` — MCP 설치 및 환경 준비
-- `.github/actions/mcp-setup/mcp-config.json` — MCP 서버 설정 템플릿 (**Atlassian URL 수정 필요**)
+- `.github/actions/mcp-setup/mcp-config.json` — MCP 서버 설정
 - `CLAUDE_ACTIONS.md` — Claude가 참고하는 서비스별 사용 지침
 
 ---

@@ -19,7 +19,7 @@ inputs:
     required: false
     default: ''
   figma_access_token:
-    description: 'FIGMA_ACCESS_TOKEN'
+    description: 'FIGMA_ACCESS_TOKEN (Personal Access Token)'
     required: false
     default: ''
 
@@ -29,8 +29,17 @@ runs:
     - name: Install MCP servers
       shell: bash
       run: |
-        pip install mcp-atlassian --quiet --break-system-packages && sudo ln -sf ~/.local/bin/mcp-atlassian /usr/local/bin/mcp-atlassian
-        npm install -g figma-developer-mcp --silent
+        if [ "${{ inputs.atlassian_api_token }}" != "" ]; then
+          pip install mcp-atlassian --quiet --break-system-packages && sudo ln -sf ~/.local/bin/mcp-atlassian /usr/local/bin/mcp-atlassian
+        fi
+        if [ "${{ inputs.figma_access_token }}" != "" ]; then
+          npm install -g figma-developer-mcp --silent
+          FDM_PATH=$(npm root -g)/figma-developer-mcp
+          if [ ! -f /usr/local/bin/figma-developer-mcp ]; then
+            sudo ln -sf "${FDM_PATH}/.bin/figma-developer-mcp" /usr/local/bin/figma-developer-mcp 2>/dev/null || true
+            sudo ln -sf "$(npm bin -g)/figma-developer-mcp" /usr/local/bin/figma-developer-mcp 2>/dev/null || true
+          fi
+        fi
 
     - name: Exchange Datadog OAuth token
       if: ${{ inputs.datadog_mcp_token != '' }}
@@ -64,3 +73,26 @@ runs:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
       run: |
         echo "SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN//[[:space:]]}" >> $GITHUB_ENV
+
+    - name: "[DEBUG] Verify setup"
+      shell: bash
+      run: |
+        echo "=== Secret injection check ==="
+        echo "ATLASSIAN_EMAIL set:     ${{ inputs.atlassian_email != '' }}"
+        echo "ATLASSIAN_API_TOKEN set: ${{ inputs.atlassian_api_token != '' }}"
+        echo "SLACK_BOT_TOKEN set:     ${{ inputs.slack_bot_token != '' }}"
+        echo "DATADOG_MCP_TOKEN set:   ${{ inputs.datadog_mcp_token != '' }}"
+        echo "FIGMA_ACCESS_TOKEN set:  ${{ inputs.figma_access_token != '' }}"
+        echo "=== /tmp/mcp-config.json (tokens masked) ==="
+        if [ -f /tmp/mcp-config.json ]; then
+          cat /tmp/mcp-config.json \
+            | sed 's/"ATLASSIAN_API_TOKEN": "[^"]*"/"ATLASSIAN_API_TOKEN": "***"/g' \
+            | sed 's/"ATLASSIAN_EMAIL": "[^"]*"/"ATLASSIAN_EMAIL": "***"/g' \
+            | sed 's/"Authorization": "Bearer [^"]*"/"Authorization": "Bearer ***"/g' \
+            | sed 's/"FIGMA_API_KEY": "[^"]*"/"FIGMA_API_KEY": "***"/g'
+        else
+          echo "(mcp-config.json not generated — MCP not used)"
+        fi
+        echo "=== MCP binary check ==="
+        echo "mcp-atlassian:       $(which mcp-atlassian 2>/dev/null || echo 'not installed')"
+        echo "figma-developer-mcp: $(which figma-developer-mcp 2>/dev/null || echo 'not installed')"

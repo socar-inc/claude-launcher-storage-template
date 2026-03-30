@@ -1,0 +1,29 @@
+name: "Test - Claude GitHub(CLI)"
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  run-claude:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Claude
+        uses: anthropics/claude-code-action@v1
+        env:
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PAT }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_TOKEN }}
+          claude_args: "--dangerously-skip-permissions"
+          show_full_output: "true"
+          prompt: |
+            작업 시작 전 반드시 `./CLAUDE_ACTIONS.md` 파일을 읽고 GitHub CLI 사용 지침을 따를 것.
+            ---
+            GitHub CLI 테스트:
+            1. gh CLI로 현재 레포의 최근 PR 3개를 조회해 번호·제목·상태를 출력
+            2. GH_PAT을 사용해 다른 org 레포(YOUR_ORG/YOUR_REPO)의 README.md 파일 첫 5줄을 출력

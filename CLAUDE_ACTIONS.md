@@ -121,7 +121,7 @@ curl -sf -X POST "https://slack.com/api/chat.postMessage" \
   -d '{"channel": "<채널 ID>", "text": "메시지 내용"}'
 ```
 
-> 채널 ID: Slack URL `https://your-workspace.slack.com/archives/CXXXXXXXXXX` 에서 추출
+> 채널 ID: Slack URL `https://socar.slack.com/archives/CXXXXXXXXXX` 에서 추출
 > 📖 https://api.slack.com/methods
 
 ---

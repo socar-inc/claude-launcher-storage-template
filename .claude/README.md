@@ -10,12 +10,13 @@ GitHub Actions 실행 시 Secrets에서 환경변수를 주입합니다.
 | Secret | 해당 서비스 | 발급 방법 |
 |--------|------------|-----------|
 | `CLAUDE_CODE_TOKEN` | Claude | Claude Code OAuth 토큰 |
-| `GH_PAT` | GitHub | [GitHub Personal Access Token](https://github.com/settings/tokens) — `repo`, `read:org` 권한 |
 | `ATLASSIAN_EMAIL` | Atlassian | Atlassian 계정 이메일 |
 | `ATLASSIAN_API_TOKEN` | Atlassian | [Atlassian API 토큰 발급](https://id.atlassian.com/manage-profile/security/api-tokens) |
 | `SLACK_BOT_TOKEN` | Slack | 아래 참고 (`xoxb-` 형식) |
 | `DATADOG_MCP_TOKEN` | Datadog | 아래 참고 (JSON 형식) |
 | `FIGMA_ACCESS_TOKEN` | Figma | [Figma Personal Access Token](https://www.figma.com/developers/api#access-tokens) |
+
+> **GitHub 인증:** `GITHUB_TOKEN`은 GitHub Actions 실행 시 자동 제공되므로 별도 설정 불필요.
 
 ---
 

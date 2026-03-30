@@ -4,10 +4,10 @@
       "type": "stdio",
       "command": "mcp-atlassian",
       "env": {
-        "CONFLUENCE_URL": "https://socarcorp.atlassian.net",
+        "CONFLUENCE_URL": "https://your-domain.atlassian.net",
         "CONFLUENCE_USERNAME": "${ATLASSIAN_EMAIL}",
         "CONFLUENCE_API_TOKEN": "${ATLASSIAN_API_TOKEN}",
-        "JIRA_URL": "https://socarcorp.atlassian.net",
+        "JIRA_URL": "https://your-domain.atlassian.net",
         "JIRA_USERNAME": "${ATLASSIAN_EMAIL}",
         "JIRA_API_TOKEN": "${ATLASSIAN_API_TOKEN}"
       }
@@ -22,7 +22,10 @@
     "figma": {
       "type": "stdio",
       "command": "figma-developer-mcp",
-      "env": { "FIGMA_API_KEY": "${FIGMA_ACCESS_TOKEN}" }
+      "args": ["--stdio"],
+      "env": {
+        "FIGMA_API_KEY": "${FIGMA_ACCESS_TOKEN}"
+      }
     }
   }
 }

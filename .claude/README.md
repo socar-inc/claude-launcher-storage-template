@@ -3,8 +3,6 @@
 `.github/actions/mcp-setup/mcp-config.json`에 MCP 서버가 정의되어 있으며,
 GitHub Actions 실행 시 Secrets에서 환경변수를 주입합니다.
 
-> **시작 전:** `mcp-config.json`의 `your-domain.atlassian.net`을 실제 Atlassian 도메인으로 변경하세요.
-
 ---
 
 ## 필요한 GitHub Secrets
@@ -38,10 +36,11 @@ curl -H "Authorization: Bearer <token>" https://slack.com/api/auth.test
 
 ## Atlassian 설정
 
+Atlassian 도메인: `socarcorp.atlassian.net`
+
 1. https://id.atlassian.com/manage-profile/security/api-tokens 에서 API 토큰 발급
 2. `ATLASSIAN_EMAIL`: Atlassian 로그인 이메일
 3. `ATLASSIAN_API_TOKEN`: 발급한 API 토큰
-4. `mcp-config.json`의 `your-domain.atlassian.net` → 실제 도메인으로 수정
 
 ---
 

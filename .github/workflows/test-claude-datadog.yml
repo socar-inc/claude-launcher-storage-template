@@ -1,0 +1,32 @@
+name: "Test - Claude Datadog(MCP)"
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  run-claude:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/mcp-setup
+        with:
+          datadog_mcp_token: ${{ secrets.DATADOG_MCP_TOKEN }}
+      - name: Run Claude
+        uses: anthropics/claude-code-action@v1
+        env:
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PAT }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_TOKEN }}
+          claude_args: "--mcp-config /tmp/mcp-config.json --dangerously-skip-permissions"
+          show_full_output: "true"
+          prompt: |
+            작업 시작 전 반드시 `./CLAUDE_ACTIONS.md` 파일을 읽고 MCP 도구 사용 지침을 따를 것.
+            ---
+            Datadog MCP 테스트:
+            1. 사용 가능한 Datadog MCP 도구를 활용해 활성화된 모니터 5개를 조회해줘
+            2. 각 모니터 이름과 상태(OK/Alert/Warn)를 간단히 출력

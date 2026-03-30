@@ -1,0 +1,33 @@
+name: "Test - Claude Atlassian(MCP)"
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  run-claude:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/mcp-setup
+        with:
+          atlassian_email: ${{ secrets.ATLASSIAN_EMAIL }}
+          atlassian_api_token: ${{ secrets.ATLASSIAN_API_TOKEN }}
+      - name: Run Claude
+        uses: anthropics/claude-code-action@v1
+        env:
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PAT }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_TOKEN }}
+          claude_args: "--mcp-config /tmp/mcp-config.json --dangerously-skip-permissions"
+          show_full_output: "true"
+          prompt: |
+            작업 시작 전 반드시 `./CLAUDE_ACTIONS.md` 파일을 읽고 MCP 도구 사용 지침을 따를 것.
+            ---
+            Confluence MCP 테스트:
+            confluence_search 로 CQL "space.type=global" 쿼리를 실행하고,
+            결과에서 소속 스페이스 키와 이름을 중복 제거해 3개만 출력해줘.

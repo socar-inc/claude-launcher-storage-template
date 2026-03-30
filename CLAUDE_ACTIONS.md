@@ -17,7 +17,7 @@
 
 | 서비스 | 방식 | 비고 |
 |--------|------|------|
-| GitHub | `gh` CLI | `GITHUB_TOKEN` / `GH_PAT` 자동 주입 |
+| GitHub | `gh` CLI | GitHub Actions 실행 시 `GITHUB_TOKEN` 자동 제공 |
 | Atlassian (Confluence/Jira) | MCP 우선 → curl 폴백 | `mcp-atlassian` 패키지 |
 | Slack | curl | MCP 사용 금지 |
 | Datadog | MCP | HTTP MCP 서버 |
@@ -27,18 +27,19 @@
 
 ## GitHub — `gh` CLI
 
-> MCP 툴 호출 금지. `gh` CLI가 인증된 상태로 제공되며 MCP보다 빠르고 안정적임.
+> MCP 툴 호출 금지. `gh` CLI는 `GITHUB_TOKEN`이 자동 제공되어 별도 인증 설정 없이 실행됨.
 
-| 인증 | 환경변수 |
-|------|----------|
-| 현재 레포 | `GITHUB_TOKEN` (자동) |
-| 다른 레포/org | `GH_PAT` |
+`GITHUB_TOKEN`은 개인 토큰이 아니라 GitHub Actions 실행 시 자동 생성·주입되는 임시 토큰임.
 
-**다른 org 레포 접근 시**
+| 대상 | 인증 |
+|------|------|
+| 현재 레포 | GitHub Actions 실행 시 자동 제공 |
+| 다른 org public 레포 | 동일 (자동) |
+| 다른 org private 레포 | `GH_PAT` 별도 설정 필요 |
 
 ```bash
-export GH_TOKEN=$GH_PAT
-gh api repos/org/some-repo/contents/path/to/file \
+# 다른 org public 레포도 별도 설정 없이 바로 사용
+gh api repos/socar-inc/some-repo/contents/path/to/file \
   --jq '.content' | base64 -d
 ```
 
@@ -104,7 +105,7 @@ curl -sf "https://socarcorp.atlassian.net/..." \
 
 ## Slack — curl
 
-> MCP 툴(`mcp__slack__*`) 호출 금지. 워크스페이스 규모가 커서 목록 조회 응답이 수십만 자를 초과할 수 있음.
+> MCP 툴(`mcp__slack__*`) 호출 금지. 워크스페이스 규모가 커서 목록 조회 응답이 수십만 자를 초과함.
 
 인증: `Authorization: Bearer $SLACK_BOT_TOKEN`
 
@@ -125,7 +126,7 @@ base URL: `https://slack.com/api/`
 curl -sf -X POST "https://slack.com/api/chat.postMessage" \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"channel": "YOUR_CHANNEL_ID", "text": "메시지 내용"}'
+  -d '{"channel": "C0AB1Q775QE", "text": "메시지 내용"}'
 ```
 
 > 채널 ID: Slack URL `https://socar.slack.com/archives/CXXXXXXXXXX` 에서 추출

@@ -35,6 +35,8 @@ Repository Settings → Secrets and variables → Actions 에 등록합니다.
 | `DATADOG_MCP_TOKEN` | Datadog MCP 토큰 (JSON: `{client_id, refresh_token}`) | Datadog |
 | `FIGMA_ACCESS_TOKEN` | Figma Personal Access Token | Figma |
 
+> 각 토큰 발급 방법 → [`.claude/README.md`](.claude/README.md)
+
 ---
 
 ## MCP 동작 구조

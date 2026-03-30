@@ -27,18 +27,10 @@
 
 ## GitHub — `gh` CLI
 
-> Ubuntu runner에 `gh` CLI가 기본 내장되어 있어 MCP보다 빠르고 안정적임. `GITHUB_TOKEN`이 자동 제공되어 별도 인증 설정 없이 실행됨.
-
-`GITHUB_TOKEN`은 개인 토큰이 아니라 GitHub Actions 실행 시 자동 생성·주입되는 임시 토큰임.
-
-| 대상 | 인증 |
-|------|------|
-| 현재 레포 | GitHub Actions 실행 시 자동 제공 |
-| 다른 org public 레포 | 동일 (자동) |
-| 다른 org private 레포 | `GH_PAT` 별도 설정 필요 |
+> Ubuntu runner에 `gh` CLI가 기본 내장되어 있어 MCP보다 빠르고 안정적임.
+> `GITHUB_TOKEN`은 GitHub Actions 실행 시 자동 생성·주입되는 임시 토큰으로, 별도 인증 설정 없이 org 내 모든 레포에 접근 가능.
 
 ```bash
-# 다른 org public 레포도 별도 설정 없이 바로 사용
 gh api repos/socar-inc/some-repo/contents/path/to/file \
   --jq '.content' | base64 -d
 ```
@@ -126,10 +118,10 @@ base URL: `https://slack.com/api/`
 curl -sf -X POST "https://slack.com/api/chat.postMessage" \
   -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"channel": "C0AB1Q775QE", "text": "메시지 내용"}'
+  -d '{"channel": "<채널 ID>", "text": "메시지 내용"}'
 ```
 
-> 채널 ID: Slack URL `https://socar.slack.com/archives/CXXXXXXXXXX` 에서 추출
+> 채널 ID: Slack URL `https://your-workspace.slack.com/archives/CXXXXXXXXXX` 에서 추출
 > 📖 https://api.slack.com/methods
 
 ---

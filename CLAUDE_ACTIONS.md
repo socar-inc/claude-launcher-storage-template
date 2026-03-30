@@ -83,7 +83,7 @@ gh api repos/org/some-repo/contents/path/to/file \
 인증: Basic Auth
 
 ```bash
-curl -sf "https://your-domain.atlassian.net/..." \
+curl -sf "https://socarcorp.atlassian.net/..." \
   -u "$ATLASSIAN_EMAIL:$ATLASSIAN_API_TOKEN" \
   -H "Accept: application/json"
 ```
@@ -128,7 +128,7 @@ curl -sf -X POST "https://slack.com/api/chat.postMessage" \
   -d '{"channel": "YOUR_CHANNEL_ID", "text": "메시지 내용"}'
 ```
 
-> 채널 ID: Slack URL `https://your-workspace.slack.com/archives/CXXXXXXXXXX` 에서 추출
+> 채널 ID: Slack URL `https://socar.slack.com/archives/CXXXXXXXXXX` 에서 추출
 > 📖 https://api.slack.com/methods
 
 ---

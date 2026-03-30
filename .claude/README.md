@@ -64,7 +64,7 @@ python3 scripts/datadog-mcp-auth.py
 
 앱 하단 상태바 **⚡ Storage** → `DATADOG_MCP_TOKEN` **🔑 OAuth 인증** 버튼
 
-> 발급된 클라이언트 관리: https://app.datadoghq.com/personal-settings/apps
+> 토큰 전체 revoke: https://app.datadoghq.com/personal-settings/apps → `_datadog` Disable
 
 ---
 

@@ -9,7 +9,7 @@ GitHub Actions 실행 시 Secrets에서 환경변수를 주입합니다.
 
 | Secret | 해당 서비스 | 발급 방법 |
 |--------|------------|-----------|
-| `CLAUDE_CODE_TOKEN` | Claude | Claude Code OAuth 토큰 |
+| `CLAUDE_CODE_TOKEN` | Claude | 아래 참고 |
 | `ATLASSIAN_EMAIL` | Atlassian | Atlassian 계정 이메일 |
 | `ATLASSIAN_API_TOKEN` | Atlassian | [Atlassian API 토큰 발급](https://id.atlassian.com/manage-profile/security/api-tokens) |
 | `SLACK_BOT_TOKEN` | Slack | 아래 참고 (`xoxb-` 형식) |
@@ -17,6 +17,22 @@ GitHub Actions 실행 시 Secrets에서 환경변수를 주입합니다.
 | `FIGMA_ACCESS_TOKEN` | Figma | [Figma Personal Access Token](https://www.figma.com/developers/api#access-tokens) |
 
 > **GitHub 인증:** `GITHUB_TOKEN`은 GitHub Actions 실행 시 자동 제공되므로 별도 설정 불필요.
+
+---
+
+## CLAUDE_CODE_TOKEN 설정
+
+**방법 1 — 수동**
+
+```bash
+claude setup-token
+```
+
+출력된 토큰(`sk-ant-` / `euauth_` / `oa_` 로 시작)을 `CLAUDE_CODE_TOKEN` 시크릿으로 등록
+
+**방법 2 — claude-launcher 앱**
+
+앱 하단 상태바 **⚡ Storage** → `CLAUDE_CODE_TOKEN` **발급** 버튼
 
 ---
 
@@ -53,7 +69,7 @@ Atlassian 도메인: `socarcorp.atlassian.net`
 {"client_id": "...", "refresh_token": "..."}
 ```
 
-**방법 1 — 스크립트 실행 (외부)**
+**방법 1 — 수동**
 
 ```bash
 python3 scripts/datadog-mcp-auth.py

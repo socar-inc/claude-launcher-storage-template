@@ -1,0 +1,32 @@
+name: "Test - Claude Slack(CURL)"
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  run-claude:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/mcp-setup
+        with:
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Run Claude
+        uses: anthropics/claude-code-action@v1
+        env:
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PAT }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_TOKEN }}
+          claude_args: "--dangerously-skip-permissions"
+          show_full_output: "true"
+          prompt: |
+            작업 시작 전 반드시 `./CLAUDE_ACTIONS.md` 파일을 읽고 Slack curl 사용 지침을 따를 것.
+            ---
+            Slack 테스트:
+            1. curl로 채널 YOUR_CHANNEL_ID 에 ":white_check_mark: Slack curl 테스트 메시지입니다." 전송
+            2. 응답의 ok 값과 ts 값을 출력

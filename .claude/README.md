@@ -52,14 +52,17 @@ Atlassian 도메인: `socarcorp.atlassian.net`
 {"client_id": "...", "refresh_token": "..."}
 ```
 
-**claude-launcher 앱 사용 시 (권장)**
-1. GitHub Actions 설정 → `DATADOG_MCP_TOKEN` 항목의 **🔑 OAuth 인증** 버튼 클릭
-2. 브라우저에서 Datadog 계정으로 로그인 및 권한 승인
-3. 자동으로 JSON 값이 생성되어 입력됨
+**방법 1 — 스크립트 실행 (외부)**
 
-**수동 발급 시**
-- Discovery URL: `https://mcp.datadoghq.com/.well-known/oauth-authorization-server`
-- OAuth 2.1 PKCE (Dynamic Client Registration 포함)로 `client_id` + `refresh_token` 취득
+```bash
+python3 scripts/datadog-mcp-auth.py
+```
+
+브라우저에서 Datadog 로그인 → 출력된 JSON을 `DATADOG_MCP_TOKEN` 시크릿에 저장
+
+**방법 2 — claude-launcher 앱**
+
+앱 하단 상태바 **⚡ Storage** → `DATADOG_MCP_TOKEN` **🔑 OAuth 인증** 버튼
 
 ---
 
